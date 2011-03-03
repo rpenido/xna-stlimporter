@@ -29,7 +29,6 @@ namespace Simples.Content.Pipeline.STLImporter
     public class STLImporter : ContentImporter<NodeContent>
     {
 
-        // The current mesh being constructed
         private MeshBuilder meshBuilder;
 
         public override NodeContent Import(string filename, ContentImporterContext context)
@@ -45,14 +44,13 @@ namespace Simples.Content.Pipeline.STLImporter
             meshBuilder.SwapWindingOrder = true;
             /***/
 
-            int normalsChannelIndex = meshBuilder.CreateVertexChannel<Vector3>(VertexChannelNames.Normal(0));;
-            int[] verticesIndex = new int[faceCount*3];                
+            int normalsChannelIndex = meshBuilder.CreateVertexChannel<Vector3>(VertexChannelNames.Normal(0));
+            int[] verticesIndex = new int[faceCount * 3];
+            Vector3[] normalList = new Vector3[faceCount];                
             for (int i = 0; i < faceCount; i++)
-            {                
+            {
+                normalList[i] = new Vector3(sr.ReadSingle(), sr.ReadSingle(), sr.ReadSingle());
                 
-                Vector3 normal = new Vector3(sr.ReadSingle(),
-                    sr.ReadSingle(), sr.ReadSingle());
-                meshBuilder.SetVertexChannelData(normalsChannelIndex, normal);
                 for (int j = i*3; j < (i*3)+3; j++)
                 {
                     
@@ -65,6 +63,7 @@ namespace Simples.Content.Pipeline.STLImporter
             }
             for (int i = 0; i < faceCount; i++)
             {
+                meshBuilder.SetVertexChannelData(normalsChannelIndex, normalList[i]);
                 for (int j = i*3; j < (i*3)+3; j++)
                 {
                     meshBuilder.AddTriangleVertex(verticesIndex[j]);
