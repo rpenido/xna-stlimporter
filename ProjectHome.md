@@ -1,0 +1,1 @@
+XNA 4.0 Content Pipeline Importer which allow the importation of STL model files (.stl) as native XNA Content.
